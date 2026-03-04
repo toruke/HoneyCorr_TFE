@@ -165,3 +165,13 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# OpenTofu / Terraform
+opentofu/*.tfvars
+opentofu/.terraform/
+opentofu/.terraform.lock.hcl
+opentofu/terraform.tfstate
+opentofu/terraform.tfstate.backup
+
+# Ansible
+ansible/*.retry
+ansible/group_vars/all/vault.yml
