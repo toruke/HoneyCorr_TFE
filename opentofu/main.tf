@@ -2,7 +2,7 @@
 # ÉTAPE 1 — Télécharger l'image Ubuntu 24.04 sur hyps01
 # =============================================================================
 resource "proxmox_virtual_environment_download_file" "ubuntu_2404_image" {
-  node_name    = var.proxmox_node   # hyps01
+  node_name    = var.proxmox_node
   content_type = "iso"
   datastore_id = "local"            # Stockage pour l'image
 
@@ -43,11 +43,34 @@ resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
 }
 
 # =============================================================================
-# ÉTAPE 3 — Créer le template cloud-init
+# ÉTAPE 3 — Création des vmbr sur proxmox
+# =============================================================================
+
+resource "proxmox_virtual_environment_network_linux_vlan" "vlan10" {
+  node_name  = var.proxmox_node
+  name       = "vmbr0.10"
+  comment    = "VLAN 10 - Management"
+}
+
+resource "proxmox_virtual_environment_network_linux_vlan" "vlan20" {
+  node_name  = var.proxmox_node
+  name       = "vmbr0.20"
+  comment    = "VLAN 20 - Production"
+}
+
+resource "proxmox_virtual_environment_network_linux_vlan" "vlan30" {
+  node_name  = var.proxmox_node
+  name       = "vmbr0.30"
+  comment    = "VLAN 30 - Honeypot"
+}
+
+
+# =============================================================================
+# ÉTAPE 4 — Créer le template cloud-init
 # =============================================================================
 resource "proxmox_virtual_environment_vm" "ubuntu_2404_template" {
   name      = "ubuntu-2404-template"
-  node_name = var.proxmox_node   # hyps01
+  node_name = var.proxmox_node
   vm_id     = 9000
   template  = true               # Convertit directement en template
   started   = false              # Un template ne démarre jamais
@@ -107,20 +130,19 @@ resource "proxmox_virtual_environment_vm" "ubuntu_2404_template" {
 
 
 # =============================================================================
-# ÉTAPE 4 — Créer la VM vm-test-01 depuis le template
+# ÉTAPE 5 — Créer les VM depuis le template
 # =============================================================================
-resource "proxmox_virtual_environment_vm" "vm_test_01" {
-  name      = "vm-test-01"
+
+resource "proxmox_virtual_environment_vm" "vms" {
+  for_each  = var.vms
+  name      = each.key
   node_name = var.proxmox_node
-  vm_id     = 100
-  started   = true
+  vm_id     = each.value.vm_id
+  stop_on_destroy = true 
 
-  description = "VM de test — gérée par OpenTofu"
-
-  # Cloner depuis le template 9000
   clone {
     vm_id = proxmox_virtual_environment_vm.ubuntu_2404_template.vm_id
-    full  = true  # Clone complet (pas de lien avec le template)
+    full  = true
   }
 
   agent {
@@ -129,12 +151,12 @@ resource "proxmox_virtual_environment_vm" "vm_test_01" {
   }
 
   cpu {
-    cores = 1
+    cores = each.value.cores
     type  = "x86-64-v2-AES"
   }
 
   memory {
-    dedicated = 1024  # 1 Go RAM
+    dedicated = each.value.memory
   }
 
   disk {
@@ -148,35 +170,32 @@ resource "proxmox_virtual_environment_vm" "vm_test_01" {
   network_device {
     bridge = "vmbr0"
     model  = "virtio"
+    vlan_id = each.value.vlan_id 
   }
 
-  # Cloud-init — configuration automatique au premier boot
   initialization {
-    datastore_id = "local-lvm"
-    
-    # Installation de l'agent QEMU
+    datastore_id      = "local-lvm"
+    interface         = "ide2"
     user_data_file_id = proxmox_virtual_environment_file.cloud_init_user_data.id
-    # DNS
+
     dns {
-      servers  = ["10.1.0.254", "1.1.1.1"]
+      servers = ["10.1.0.254", "1.1.1.1"]
     }
 
-    # IP statique
     ip_config {
       ipv4 {
-        address = "10.1.0.50/24"
+        address = "${each.value.ip}/24"
         gateway = "10.1.0.254"
       }
     }
 
-    # Utilisateur et clé SSH
-#    user_account {
-#      username = "ubuntu"
-#      keys     = [
-#      password = "root"
-#        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAngsas1Sh3MzHOfsJ6IPRRhqPgOz+lzabDxL9KfR0yL abenpro@outlook.fr"
-#      ]
-#    }
+    user_account {
+      username = "ubuntu"
+      password = "root"
+      keys     = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAngsas1Sh3MzHOfsJ6IPRRhqPgOz+lzabDxL9KfR0yL abenpro@outlook.fr"
+      ]
+    }
   }
 
   scsi_hardware = "virtio-scsi-single"

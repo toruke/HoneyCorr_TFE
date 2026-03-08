@@ -2,6 +2,8 @@
 
 ## prerequis
 
+have a share storage iscsi.
+
 first you have to install opentofu 
 
 for debian user : 

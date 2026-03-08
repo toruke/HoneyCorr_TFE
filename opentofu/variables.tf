@@ -12,5 +12,15 @@ variable "proxmox_token" {
 variable "proxmox_node" {
   description = "Nœud Proxmox cible"
   type        = string
-  default     = "hyps01"
+}
+
+variable "vms"{
+  description = "List des VMs à créer"
+  type = map(object({
+    vm_id    = number
+    ip       = string
+    cores    = number
+    memory   = number
+    vlan_id  = number
+  }))
 }
