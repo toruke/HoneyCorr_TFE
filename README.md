@@ -1,17 +1,35 @@
-# Distributed_honeypot_with_attack_correlation_TFE
+# How to install the project
 
-Créez un réseau de honeypots déployés sur différents segments réseau qui partagent leurs données d'attaques. Le système corrèle les informations pour identifier des campagnes d'attaques coordonnées et génère automatiquement des règles de pare-feu.
+## prerequis
 
-## chois du projet
+first you have to install opentofu 
 
-pendant mes temps libre j'ai crée un petit homelab cher moi avec differents ordinateur trouver en ocasion sur le net et j'y est installer proxmox dessus j'ai donc une infrastructure de test.
+for debian user : 
+```bash
+# Download the installer script:
+curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh
+# Alternatively: wget --secure-protocol=TLSv1_2 --https-only https://get.opentofu.org/install-opentofu.sh -O install-opentofu.sh
 
-voici un schéma de cette infrastructure :
-![alt text](Schema/image.png)
+# Give it execution permissions:
+chmod +x install-opentofu.sh
 
-pour continuer et crée des machines virtuel qui me servirons pour mon infrastructure je vais utiliser un language IaC le candidat qui ma le 
-plus plu est opentofu solution opensource qui viens d'un fork de terraform language utiliser par hashiCorp c'est déjà un bon début mais dans 
-mes vm je vais vouloir modifier des choses dedans pour pouvoir installer mes honeypots dessus c'est a se moment la que je vais utiliser 
-ansible qui va me permetre via ssh de modifier les vm que j'aurais crée pour mon infrastructure.
+# Please inspect the downloaded script
 
-pour les honeypots je n'ai pas encore choisi mais mon regarde se port plus sur des solutions comme cowrie
+# Run the installer:
+./install-opentofu.sh --install-method deb
+
+# Remove the installer:
+rm -f install-opentofu.sh
+```
+
+if you use somthink else go to : https://opentofu.org/docs/intro/install/deb/
+
+## install the projet
+
+go in your folder to install the projet and use git:
+```
+git clone https://codeberg.org/ben1348/HoneyCorr_TFE.git
+cd HONEYCORR_TFE
+```
+
+after that créate a file terraform.tfvars where you can store your vars for your proxmox server ...
