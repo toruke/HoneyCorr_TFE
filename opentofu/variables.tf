@@ -22,5 +22,16 @@ variable "vms"{
     cores    = number
     memory   = number
     vlan_id  = number
+    gateway = string
   }))
+}
+
+variable "ssh_key" {
+  description = "Clé ssh publique"
+  type = string
+}
+
+variable "vm_user" {
+  description = "Username par défaut des VMs"
+  type        = string
 }

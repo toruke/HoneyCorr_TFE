@@ -3,10 +3,8 @@
 terraform {
   required_providers {
     proxmox = {
-      source  = "bpg/proxmox"  # Où télécharger le provider
-                                # (registry.opentofu.org/bpg/proxmox)
-      version = "~> 0.73"      # Version à utiliser
-                                # ~> 0.73 = >= 0.73 mais < 1.0
+      source  = "bpg/proxmox"  # Où télécharger le provider (registry.opentofu.org/bpg/proxmox)
+      version = "0.98.1"      # Version à utiliser
     }
   }
 }
