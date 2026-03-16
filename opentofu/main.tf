@@ -1,4 +1,4 @@
-# Télécharger l'image Ubuntu 24.04 sur hyps01
+### Télécharger l'image Ubuntu 24.04 sur hyps01
 resource "proxmox_virtual_environment_download_file" "ubuntu_2404_image" {
   node_name    = var.proxmox_node
   content_type = "iso"
@@ -10,7 +10,7 @@ resource "proxmox_virtual_environment_download_file" "ubuntu_2404_image" {
   overwrite = false  # Ne re-télécharge pas si le fichier existe déjà
 }
 
-# Fichier cloud-init 
+### Fichier cloud-init 
 resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
   content_type = "snippets"
   datastore_id = "local"
@@ -25,7 +25,7 @@ resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
   }
 }
 
-# Création des vmbr sur proxmox
+### Création des vmbr sur proxmox
 
 resource "proxmox_virtual_environment_network_linux_vlan" "vlan10" {
   node_name  = var.proxmox_node
@@ -45,7 +45,8 @@ resource "proxmox_virtual_environment_network_linux_vlan" "vlan30" {
   comment    = "VLAN 30 - Honeypot"
 }
 
-# Créer le template cloud-init
+### Créer le template cloud-init
+
 resource "proxmox_virtual_environment_vm" "ubuntu_2404_template" {
   name      = "ubuntu-2404-template"
   node_name = var.proxmox_node
@@ -106,7 +107,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_2404_template" {
   scsi_hardware = "virtio-scsi-single"
 }
 
-# Créer les VM depuis le template
+### Créer les VM depuis le template
 
 resource "proxmox_virtual_environment_vm" "vms" {
   for_each  = var.vms
@@ -123,6 +124,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   agent {
     enabled = true
     timeout = "3m"
+    trim    = false
   }
 
   cpu {
@@ -160,7 +162,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
     ip_config {
       ipv4 {
         address = "${each.value.ip}/24"
-        gateway = each.value.ip
+        gateway = each.value.gateway
       }
     }
 
