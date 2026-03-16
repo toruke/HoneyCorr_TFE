@@ -1,5 +1,11 @@
 # How to install the project
 
+**L'ojectif final résumé en une phrase**
+
+```
+git clone → tofu apply → ansible-playbook → honeypot opérationnel
+```
+
 ## prerequis
 
 have a share storage iscsi.
