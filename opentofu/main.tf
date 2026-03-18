@@ -25,25 +25,6 @@ resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
   }
 }
 
-### Création des vmbr sur proxmox
-
-resource "proxmox_virtual_environment_network_linux_vlan" "vlan10" {
-  node_name  = var.proxmox_node
-  name       = "vmbr0.10"
-  comment    = "VLAN 10 - Management"
-}
-
-resource "proxmox_virtual_environment_network_linux_vlan" "vlan20" {
-  node_name  = var.proxmox_node
-  name       = "vmbr0.20"
-  comment    = "VLAN 20 - Production"
-}
-
-resource "proxmox_virtual_environment_network_linux_vlan" "vlan30" {
-  node_name  = var.proxmox_node
-  name       = "vmbr0.30"
-  comment    = "VLAN 30 - Honeypot"
-}
 
 ### Créer le template cloud-init
 
