@@ -1,0 +1,14 @@
+proxmox_url = "your url"
+proxmox_token = "userproxmox@pve!yourtoken"
+proxmox_node = "yourname"
+
+vms = {
+  "honeypots10" = { vm_id = 100, ip = "10.1.10.10", gateway = "10.1.10.254", cores = 1, memory = 1024, vlan_id = 10 }
+  "honeypots11" = { vm_id = 101, ip = "10.1.10.11", gateway = "10.1.10.254", cores = 1, memory = 1024, vlan_id = 10 }
+  "honeypots12" = { vm_id = 102, ip = "10.1.10.12", gateway = "10.1.10.254", cores = 1, memory = 1024, vlan_id = 10 }
+  "honeypots20" = { vm_id = 200, ip = "10.1.20.10", gateway = "10.1.20.254", cores = 1, memory = 1024, vlan_id = 20 }
+  "honeypots30" = { vm_id = 300, ip = "10.1.30.10", gateway = "10.1.30.254", cores = 1, memory = 1024, vlan_id = 30 }
+}
+
+ssh_key = "your public"
+vm_user = "honeycorr"

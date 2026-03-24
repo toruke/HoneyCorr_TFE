@@ -41,3 +41,18 @@ cd HONEYCORR_TFE
 ```
 
 after that créate a file terraform.tfvars where you can store your vars for your proxmox server ...
+
+
+## what you need 
+
+create a file to create your vm etc ...
+
+you need to get : 
+- the url from your proxmox 
+- proxmox_token (the user of your proxmox)
+- the name of the node 
+- a dictonary of the vm you what to create 
+- a ssh.pub key of your pc
+- username you what
+
+you can modify the generic file name : terraform.tfvars.generic --> terraform.tfvars
