@@ -1,0 +1,13 @@
+name: Mirror to Codeberg
+on: [push]
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Push to Codeberg
+        run: |
+          git remote add codeberg https://codeberg.org/ben1348/HoneyCorr_TFE.git
+          git push --mirror https://ben1348:${{ secrets.CODEBERG_TOKEN }}@codeberg.org/ben1348/HoneyCorr_TFE.git
