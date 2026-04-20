@@ -2,6 +2,16 @@
 
 > Déploiement automatisé d'un honeypot via OpenTofu + Ansible sur Proxmox.
 
+
+[![OpenTofu](https://img.shields.io/badge/OpenTofu-00C7B7?style=for-the-badge&logo=opentofu&logoColor=white)](https://opentofu.org/)
+[![Ansible](https://img.shields.io/badge/Ansible-EE0000?style=for-the-badge&logo=ansible&logoColor=white)](https://www.ansible.com/)
+[![Proxmox](https://img.shields.io/badge/Proxmox-E57000?style=for-the-badge&logo=proxmox&logoColor=white)](https://www.proxmox.com/)
+[![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)](https://git-scm.com/)
+[![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://www.linux.org/)
+[![Licence](https://img.shields.io/badge/Licence-MIT-green?style=for-the-badge)](LICENSE)
+[![Codeberg](https://img.shields.io/badge/Codeberg-2185D0?style=for-the-badge&logo=codeberg&logoColor=white)](https://codeberg.org/ben1348/HoneyCorr_TFE)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ton-utilisateur/HoneyCorr_TFE)
+
 ```
 git clone → tofu apply → ansible-playbook → honeypot opérationnel
 ```
