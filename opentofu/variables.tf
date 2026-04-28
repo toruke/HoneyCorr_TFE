@@ -35,3 +35,13 @@ variable "vm_user" {
   description = "Username par défaut des VMs"
   type        = string
 }
+
+variable "storage_vm" {
+  description = "Espace de stocage pour le projet honeycorr"
+  type        = string 
+}
+
+variable "storage_iso" {
+  description = "Espace de stocage pour le projet honeycorr"
+  type        = string 
+}

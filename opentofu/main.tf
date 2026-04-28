@@ -1,19 +1,17 @@
-### Télécharger l'image Ubuntu 24.04 sur hyps01
-resource "proxmox_virtual_environment_download_file" "ubuntu_2404_image" {
+### Télécharger l'image debian 12 sur hyps01
+resource "proxmox_virtual_environment_download_file" "debian_12_image" {
   node_name    = var.proxmox_node
   content_type = "iso"
-  datastore_id = "local"            # Stockage pour l'image
-
-  url       = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
-  file_name = "ubuntu-24.04-cloud.img"
-
-  overwrite = false  # Ne re-télécharge pas si le fichier existe déjà
+  datastore_id = var.storage_iso
+  url          = "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2"
+  file_name    = "debian-12-generic-amd64.img"
+  overwrite = true  # Ne re-télécharge pas si le fichier existe déjà
 }
 
 ### Fichier cloud-init 
 resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
   content_type = "snippets"
-  datastore_id = "local"
+  datastore_id = var.storage_iso
   node_name    = var.proxmox_node
 
   source_raw {
@@ -25,17 +23,16 @@ resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
   }
 }
 
-
 ### Créer le template cloud-init
 
-resource "proxmox_virtual_environment_vm" "ubuntu_2404_template" {
-  name      = "ubuntu-2404-template"
+resource "proxmox_virtual_environment_vm" "debian_12_template" {
+  name      = "debian-12-template"
   node_name = var.proxmox_node
   vm_id     = 9000
   template  = true               # Convertit directement en template
   started   = false              # Un template ne démarre jamais
 
-  description = "Template Ubuntu 24.04 cloud-init — géré par OpenTofu"
+  description = "Template debian 12 cloud-init — géré par OpenTofu"
 
   # Agent QEMU (permet de récupérer l'IP automatiquement)
   agent {
@@ -55,8 +52,8 @@ resource "proxmox_virtual_environment_vm" "ubuntu_2404_template" {
 
   # Disque — utilise l'image téléchargée à l'étape 1
   disk {
-    datastore_id = "local-lvm"
-    file_id      = proxmox_virtual_environment_download_file.ubuntu_2404_image.id
+    datastore_id = var.storage_vm
+    file_id      = proxmox_virtual_environment_download_file.debian_12_image.id
     interface    = "scsi0"
     size         = 20
     discard      = "on"
@@ -98,7 +95,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   stop_on_destroy = true 
 
   clone {
-    vm_id = proxmox_virtual_environment_vm.ubuntu_2404_template.vm_id
+    vm_id = proxmox_virtual_environment_vm.debian_12_template.vm_id
     full  = true
   }
 
@@ -118,7 +115,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   }
 
   disk {
-    datastore_id = "local-lvm"
+    datastore_id = var.storage_vm
     interface    = "scsi0"
     size         = 20
     discard      = "on"
@@ -132,7 +129,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
   }
 
   initialization {
-    datastore_id      = "local-lvm"
+    datastore_id      = var.storage_vm
     interface         = "ide2"
     user_data_file_id = proxmox_virtual_environment_file.cloud_init_user_data.id
 
@@ -155,5 +152,7 @@ resource "proxmox_virtual_environment_vm" "vms" {
     }
   }
 
-  scsi_hardware = "virtio-scsi-single"
 }
+
+###---ansible---
+

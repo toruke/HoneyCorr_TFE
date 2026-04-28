@@ -10,7 +10,9 @@ terraform {
 }
 
 # 2. BLOC provider
+
 # Dit à OpenTofu comment se connecter à Proxmox
+
 provider "proxmox" {
   endpoint  = var.proxmox_url    # URL de l'API Proxmox l'ip ici
   api_token = var.proxmox_token  # Token d'authentification
@@ -19,5 +21,10 @@ provider "proxmox" {
   ssh {
     agent    = true
     username = "root"
+    private_key = file("~/.ssh/id_ed25519")
   }
+}
+
+provider "ansible" {
+  
 }
