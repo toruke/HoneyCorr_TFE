@@ -166,12 +166,12 @@ cython_debug/
 #.idea/
 
 # OpenTofu / Terraform
-opentofu/*.tfvars
-opentofu/.terraform/
-opentofu/.terraform.lock.hcl
-opentofu/terraform.tfstate
-opentofu/terraform.tfstate*
-opentofu/terraform.tfstate*.backup
+*.tfvars
+terraform/
+terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate*
+terraform.tfstate*.backup
 
 # Ansible
 ansible/*.retry

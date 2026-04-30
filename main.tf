@@ -155,3 +155,19 @@ resource "proxmox_virtual_environment_vm" "vms" {
   }
 
 }
+
+# ── Ansible ───────────────────────────────────────────
+
+resource "null_resource" "ansible_provision" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      sleep 40
+      cd ${path.module}/ansible && ansible-playbook \
+        -i inventory.ini \
+        playbooks/site.yml \
+        --private-key ${var.ssh_private_key}
+    EOT
+  }
+
+  depends_on = [proxmox_virtual_environment_vm.vms]
+}
