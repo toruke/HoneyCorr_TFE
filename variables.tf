@@ -23,17 +23,25 @@ variable "vms"{
     memory   = number
     vlan_id  = number
     gateway = string
+    groupe = string
   }))
 }
 
-variable "ssh_key" {
+variable "ssh_public_key" {
   description = "Clé ssh publique"
   type = string
+}
+
+variable "ssh_private_key"{
+  description = "Clé ssh privé"
+  type = string
+  default     = "~/.ssh/id_ed25519"
 }
 
 variable "vm_user" {
   description = "Username par défaut des VMs"
   type        = string
+  default     = "debian"
 }
 
 variable "storage_vm" {

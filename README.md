@@ -102,7 +102,6 @@ vm_user = "honeycorr"
 ## 4. Déployer les VMs avec OpenTofu
 
 ```bash
-cd opentofu
 
 # Initialiser OpenTofu
 tofu init
@@ -134,31 +133,22 @@ ansible-playbook -i inventory/hosts.ini playbooks/honeypots.yml
 
 ```
 HoneyCorr_TFE/
-├── ansible/
-│   ├── ansible.cfg
-│   ├── inventory/
-│   │   └── hosts.ini               # Inventaire des hôtes
-│   ├── playbooks/
-│   │   └── honeypots.yml           # Playbook principal
-│   └── roles/
-│       └── common/
-│           ├── handlers/
-│           │   └── main.yml
-│           └── tasks/
-│               └── main.yml
-├── opentofu/
-│   ├── templates/
-│   │   └── cloud-init.yaml.tftpl   # Template cloud-init pour les VMs
-│   ├── main.tf                     # Configuration principale
-│   ├── providers.tf                # Déclaration du provider Proxmox
-│   ├── variables.tf                # Déclaration des variables
-│   ├── terraform.tfvars.generic    # Template de configuration (versionné)
-│   └── terraform.tfvars            # Votre configuration (non versionné ⚠️)
-├── Schema/                         # Schémas d'architecture
-├── .env
-├── .gitignore
-├── LICENSE
-└── README.md
+├── main.tf                      # VMs Proxmox (ton code actuel)
+├── ansible.tf                   # null_resource qui trigger Ansible
+├── variables.tf
+├── terraform.tfvars
+├── templates/
+│   ├── cloud-init.yaml.tftpl
+│   └── inventory.ini.tftpl      # Template inventaire
+└── ansible/
+    ├── inventory.ini             # Généré par OpenTofu
+    ├── ansible.cfg
+    ├── playbooks/
+    │   └── site.yml              # Entry point
+    └── roles/
+        ├── honeypot/             # Déploie les faux services
+        ├── log_collector/        # Configure Promtail → Loki → Grafana
+        └── firewall_sync/        # Envoie les IPs au firewall
 ```
 
 ---

@@ -6,6 +6,10 @@ terraform {
       source  = "bpg/proxmox"  # Où télécharger le provider (registry.opentofu.org/bpg/proxmox)
       version = "0.98.1"      # Version à utiliser
     }
+        ansible = {
+      source  = "ansible/ansible"
+      version = "~> 1.3"
+    }
   }
 }
 
@@ -23,8 +27,4 @@ provider "proxmox" {
     username = "root"
     private_key = file("~/.ssh/id_ed25519")
   }
-}
-
-provider "ansible" {
-  
 }

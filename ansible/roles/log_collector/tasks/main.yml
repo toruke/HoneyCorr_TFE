@@ -1,0 +1,5 @@
+---
+# TODO: tasks à implémenter
+- name: Placeholder
+  ansible.builtin.debug:
+    msg: "Role {{ role_name }} - à implémenter"

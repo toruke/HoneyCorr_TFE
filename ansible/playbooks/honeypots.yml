@@ -1,7 +1,0 @@
----
-- name: Config de base sur toutes les VMs
-  hosts: honeypots
-  become: true
-  roles:
-    - role: common
-      tags: common

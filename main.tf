@@ -1,4 +1,5 @@
-### Télécharger l'image debian 12 sur hyps01
+# ── Cloud-init ISO ────────────────────────────────────
+
 resource "proxmox_virtual_environment_download_file" "debian_12_image" {
   node_name    = var.proxmox_node
   content_type = "iso"
@@ -8,7 +9,8 @@ resource "proxmox_virtual_environment_download_file" "debian_12_image" {
   overwrite = true  # Ne re-télécharge pas si le fichier existe déjà
 }
 
-### Fichier cloud-init 
+# ── Fichier cloud-init ────────────────────────────────────
+
 resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
   content_type = "snippets"
   datastore_id = var.storage_iso
@@ -17,13 +19,13 @@ resource "proxmox_virtual_environment_file" "cloud_init_user_data" {
   source_raw {
     file_name = "cloud-init-user-data.yaml"
     data      = templatefile("${path.module}/templates/cloud-init.yaml.tftpl", {
-      ssh_key  = var.ssh_key
+      ssh_key  = var.ssh_public_key
       username = var.vm_user
     })
   }
 }
 
-### Créer le template cloud-init
+# ── Créer le template cloud-init ────────────────────────────────────
 
 resource "proxmox_virtual_environment_vm" "debian_12_template" {
   name      = "debian-12-template"
@@ -85,7 +87,7 @@ resource "proxmox_virtual_environment_vm" "debian_12_template" {
   scsi_hardware = "virtio-scsi-single"
 }
 
-### Créer les VM depuis le template
+# ── VM ────────────────────────────────────────────────
 
 resource "proxmox_virtual_environment_vm" "vms" {
   for_each  = var.vms
@@ -147,12 +149,9 @@ resource "proxmox_virtual_environment_vm" "vms" {
     user_account {
       username = var.vm_user
       keys     = [
-        var.ssh_key
+        var.ssh_public_key
         ]
     }
   }
 
 }
-
-###---ansible---
-
