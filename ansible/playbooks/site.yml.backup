@@ -1,0 +1,8 @@
+---
+- name: Déployer les honeypots
+  hosts: all
+  become: true
+  roles:
+    - honeypot       # faux SSH, HTTP, FTP, SMB...
+    - log_collector  # Promtail qui envoie vers Loki
+    - firewall_sync  # script qui push les IPs bloquées

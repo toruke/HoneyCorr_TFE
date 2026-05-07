@@ -1,0 +1,95 @@
+---
+- name: Installer les dépendances
+  ansible.builtin.apt:
+    name:
+      - git
+      - python3
+      - python3-venv
+      - python3-pip
+      - libssl-dev
+      - libffi-dev
+      - build-essential
+      - authbind
+    state: present
+    update_cache: true
+
+- name: Créer l'utilisateur cowrie
+  ansible.builtin.user:
+    name: "{{ cowrie_user }}"
+    shell: /bin/bash
+    home: "{{ cowrie_home }}"
+    create_home: true
+
+- name: Cloner le repo github de cowrie
+  ansible.builtin.git:
+    repo: https://github.com/cowrie/cowrie.git
+    dest: "{{ cowrie_home }}/cowrie"
+  become_user: "{{ cowrie_user }}"
+
+- name: Donner les droits sur le repo à cowrie
+  ansible.builtin.file:
+    path: "{{ cowrie_home }}/cowrie"
+    owner: "{{ cowrie_user }}"
+    group: "{{ cowrie_user }}"
+    recurse: true
+    
+- name: Création d'un environnement virtuel et installation des dépendances python 
+  ansible.builtin.pip:
+    requirements: "{{ cowrie_home }}/cowrie/requirements.txt"
+    virtualenv: "{{ cowrie_home }}/cowrie/.venv"
+    virtualenv_command: python3 -m venv
+  become_user: "{{ cowrie_user }}"
+
+- name: Copier la configuration par défaut de cowrie
+  ansible.builtin.copy:
+    src: "{{ cowrie_home }}/cowrie/etc/cowrie.cfg.dist"
+    dest: "{{ cowrie_home }}/cowrie/etc/cowrie.cfg"
+    owner: "{{ cowrie_user }}"
+    group: "{{ cowrie_user }}"
+    mode: '0640'
+    remote_src: true
+
+- name: Configurer le hostname de Cowrie
+  ansible.builtin.lineinfile:
+    path: "{{ cowrie_home }}/cowrie/etc/cowrie.cfg"
+    regexp: '^hostname'
+    line: "hostname = {{ cowrie_hostname }}"
+
+- name: Configurer le port d'écoute
+  ansible.builtin.lineinfile:
+    path: "{{ cowrie_home }}/cowrie/etc/cowrie.cfg"
+    regexp: '^#listen_endpoints'
+    line: "listen_endpoints = tcp:{{ cowrie_port }}:interface=0.0.0.0"
+
+- name: Déployer les faux credentials
+  ansible.builtin.copy:
+    src: userdb.txt
+    dest: "{{ cowrie_home }}/cowrie/etc/userdb.txt"
+    owner: "{{ cowrie_user }}"
+    group: "{{ cowrie_user }}"
+    mode: '0640'
+
+- name: Créer le service systemd pour Cowrie
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/cowrie.service
+    content: |
+      [Unit]
+      Description=Cowrie SSH Honeypot
+      After=network.target
+
+      [Service]
+      User={{ cowrie_user }}
+      WorkingDirectory={{ cowrie_home }}/cowrie
+      ExecStart={{ cowrie_home }}/cowrie/.venv/bin/cowrie start -n
+      Restart=always
+      RestartSec=10
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Activer et démarrer Cowrie
+  ansible.builtin.systemd:
+    name: cowrie
+    enabled: true
+    state: started
+    daemon_reload: true

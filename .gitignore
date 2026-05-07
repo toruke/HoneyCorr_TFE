@@ -1,6 +1,9 @@
 # ---> Ansible
 *.retry
-
+*all.yml
+ansible/group_vars/all.yml
+*userdb.txt
+ansible/roles/honeypots/cowrie/files/userdb.txt
 # ---> Python
 # Byte-compiled / optimized / DLL files
 __pycache__/

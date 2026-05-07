@@ -1,0 +1,8 @@
+ansible_user: VOTRE_USER
+ansible_ssh_private_key_file: ~/.ssh/VOTRE_CLE
+ansible_ssh_common_args: "-o StrictHostKeyChecking=no" # permet de passer le fingerprint pour anisble
+cowrie_hostname: ledelamachine
+cowrie_port: numeroDePort
+cowrie_user: userDuHoneypots
+cowrie_home: cheminDuHostHoneypots
+cowrie_log_path: cheminDesLogsHoneypots

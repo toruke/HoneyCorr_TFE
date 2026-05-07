@@ -1,0 +1,5 @@
+---
+- name: restart cowrie
+  ansible.builtin.systemd:
+    name: cowrie
+    state: restarted

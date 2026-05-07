@@ -1,8 +1,21 @@
 ---
-- name: Déployer les honeypots
-  hosts: all
+# Cowrie uniquement sur la VM cowrie
+- name: Déployer Cowrie
+  hosts: cowrie
   become: true
   roles:
-    - honeypot       # faux SSH, HTTP, FTP, SMB...
-    - log_collector  # Promtail qui envoie vers Loki
-    - firewall_sync  # script qui push les IPs bloquées
+    - honeypot/cowrie
+
+# OpenCanary sur les 3 VMs opencanary
+- name: Déployer OpenCanary
+  hosts: opencanary,opencanary2,opencanary3
+  become: true
+  roles:
+    - honeypot/opencanary
+
+# Dionaea uniquement sur la VM dionaea
+- name: Déployer Dionaea
+  hosts: dionaea
+  become: true
+  roles:
+    - honeypot/dionaea
